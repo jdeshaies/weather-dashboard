@@ -50,6 +50,7 @@ function returnCoordinates(coordinatesURL) {
       });
 }
 
+//Creates the URL to request the current weather based on the coordinates and saves temperature, wind speed, and humidity based on the response
 function returnCurrentWeather(coordinates) {
     console.log('Start of current weather function');
     currentWeatherURL = 'https://api.openweathermap.org/data/2.5/weather?lat='+coordinates.latitudeValue+'&lon='+coordinates.longitudeValue+'&appid='+apiKey+'&units=imperial';
@@ -69,11 +70,11 @@ function returnCurrentWeather(coordinates) {
         displayCurrentWeather();
       });
 }
+
+//Displays the city name and current temperature, wind speed, and humidity
 function displayCurrentWeather() {
-    console.log('test');
-    currentCityEl.innerHTML = citySearched;
-    console.log('Current city inner HTML after function: ' + currentCityEl.innerHTML);
-    currentTempEl.innerHTML = currentWeather.temperature;
-    currentWindEl.innerHTML = currentWeather.wind;
-    currentHumidityEl.innerHTML = currentWeather.humidity; 
+    currentCityEl.html(citySearched);
+    currentTempEl.html('Temp: ' + currentWeather.temperature.toString() + '&#176F');
+    currentWindEl.html('Wind: ' + currentWeather.wind.toString() + ' MPH');
+    currentHumidityEl.html('Humidity: ' + currentWeather.humidity.toString() + '%'); 
 }
