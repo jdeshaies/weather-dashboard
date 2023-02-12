@@ -103,9 +103,16 @@ function returnWeatherForecast(coordinates) {
   })
   .then(function (data) {
       console.log(data);
+      var listLength = data.list.length
+      console.log('List length: ' + listLength);
+      lastValue = listLength-1;
+      console.log('One less than list length: ' + lastValue);
       var maxTemp = 0;
       var objectCounter = 0;
+      var firstDay = true;
       for (var i=0; i<data.list.length; i++) {
+        console.log('Last Value: ' + lastValue);
+        console.log('i: ' + i);
         var splitArray = data.list[i].dt_txt.split(' ');
         var forecastDate = splitArray[0];
         if (i != 0) {
@@ -117,24 +124,31 @@ function returnWeatherForecast(coordinates) {
           console.log('Loop #: ' + i);
           console.log('Forecast Date: ' + forecastDate);
           console.log('Prev Day: ' + prevDay);
-          console.log('Temp: ' + temp);
-          console.log('Max Temp: ' + maxTemp);
-          if (prevDay === forecastDate) {
+          if (firstDay) {
+            console.log('First iteration');
+            maxTemp = temp;
+            firstDay = false;
+          }
+          else if (i === lastValue) {
+            console.log('Last Iteration');
+            dailyForecastObject[objectCounter] = {date: forecastDate, highTemp: maxTemp};
+          }
+          else if (prevDay === forecastDate) {
             console.log('Prev day the same');
-            // forecastTemps.push(temp);
             if (temp > maxTemp) {
               console.log('New max temp of: ' + maxTemp);
               maxTemp = temp;
             }
-            // console.log(forecastTemps);
           }
           else {
             console.log('New day');
-            dailyForecastObject[objectCounter] = {date: forecastDate, highTemp: maxTemp};
+            dailyForecastObject[objectCounter] = {date: prevDay, highTemp: maxTemp};
             maxTemp = 0;
             objectCounter++;
             console.log(dailyForecastObject);
           }
+          console.log('Temp: ' + temp);
+          console.log('Max Temp: ' + maxTemp);
         }
       }
       forecastTempArray.push(dailyForecastObject);
