@@ -21,13 +21,13 @@ var currentDayEl = $('#current-date');
 var currentWeatherIconEl = $('#current-weather-icon');
 
 //Variables needed for weather forecast
-var forecastTemps = {};
-
+var forecastTempArray = [];
+var dailyForecastObject = {};
 
 //Creates a URL to request to cooridinates for the city entered when the search button is clicked
 searchButtonEl.on('click', function (event) {
     event.preventDefault();
-    citySearched = inputEl.val();
+    citySearched = inputEl.val().trim();
     // console.log("City Name: " + inputEl.val());
     coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
     // console.log(coordinatesURL)
@@ -92,7 +92,7 @@ function displayCurrentWeather() {
     currentHumidityEl.html('Humidity: ' + currentWeather.humidity.toString() + '%'); 
 }
 
-//LEFT OFF HERE. NOT SURE IF DISPLAYING AVERAGE OF HOURLY FORECASTS FOR 5 DAYS
+//LEFT OFF HERE. NOT SURE IF DISPLAYING AVERAGE OF HOURLY FORECASTS FOR 5 DAYS. TURN ON WEATHER FORECAST FUNCTION
 function returnWeatherForecast(coordinates) {
   console.log('Start of weather forecast function');
   weatherForecastURL = 'https://api.openweathermap.org/data/2.5/forecast?lat='+coordinates.latitudeValue+'&lon='+coordinates.longitudeValue+'&appid='+apiKey+'&units=imperial';
@@ -103,12 +103,41 @@ function returnWeatherForecast(coordinates) {
   })
   .then(function (data) {
       console.log(data);
+      var maxTemp = 0;
+      var objectCounter = 0;
       for (var i=0; i<data.list.length; i++) {
         var splitArray = data.list[i].dt_txt.split(' ');
         var forecastDate = splitArray[0];
+        if (i != 0) {
+          var splitArray2 = data.list[i-1].dt_txt.split(' ');
+          var prevDay = splitArray2[0];
+        }
+        var temp = data.list[i].main.temp
         if (forecastDate !== dayjs().format('YYYY-MM-DD').toString()) {
-          console.log(data.list[i].dt_txt + ': ' + data.list[i].main.temp);
+          console.log('Loop #: ' + i);
+          console.log('Forecast Date: ' + forecastDate);
+          console.log('Prev Day: ' + prevDay);
+          console.log('Temp: ' + temp);
+          console.log('Max Temp: ' + maxTemp);
+          if (prevDay === forecastDate) {
+            console.log('Prev day the same');
+            // forecastTemps.push(temp);
+            if (temp > maxTemp) {
+              console.log('New max temp of: ' + maxTemp);
+              maxTemp = temp;
+            }
+            // console.log(forecastTemps);
+          }
+          else {
+            console.log('New day');
+            dailyForecastObject[objectCounter] = {date: forecastDate, highTemp: maxTemp};
+            maxTemp = 0;
+            objectCounter++;
+            console.log(dailyForecastObject);
+          }
         }
       }
+      forecastTempArray.push(dailyForecastObject);
+      console.log(forecastTempArray);
     });
 }
