@@ -117,15 +117,16 @@ function returnWeatherForecast(coordinates) {
         // console.log('Last Value: ' + lastValue);
         // console.log('i: ' + i);
         var splitArray = data.list[i].dt_txt.split(' ');
-        var forecastDate = splitArray[0];
+        var forecastDate = changeDateFormat(splitArray[0]);
+        console.log('Updated date: ' + forecastDate);
         if (i != 0) {
           var splitArray2 = data.list[i-1].dt_txt.split(' ');
-          var prevDay = splitArray2[0];
+          var prevDay = changeDateFormat(splitArray2[0]);
         }
         var forecastTemp = data.list[i].main.temp;
         var forecastWindSpeed = data.list[i].wind.speed;
         var forecastHumidity = data.list[i].main.humidity;
-        if (forecastDate !== dayjs().format('YYYY-MM-DD').toString()) {
+        if (forecastDate !== dayjs().format('MM-DD-YYYY').toString()) {
           // console.log('Loop #: ' + i);
           // console.log('Forecast Date: ' + forecastDate);
           // console.log('Prev Day: ' + prevDay);
@@ -196,4 +197,13 @@ function displayFiveDayForecast() {
     $('#day-'+dayNum+'-forecast').append('<h4>Humidity: '+forecastArray[0][x].topHumidity+' %</h4>');
   }
   console.log('end of display five day function');
+}
+
+function changeDateFormat(strDate) {
+  var dateArray = strDate.split('-');
+  var year = dateArray[0];
+  var month = dateArray[1];
+  var day = dateArray[2];
+  var newDate = month+'-'+day+'-'+year;
+  return newDate;
 }
