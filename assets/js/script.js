@@ -180,9 +180,20 @@ function returnWeatherForecast(coordinates) {
       }
       forecastArray.push(dailyForecastObject);
       console.log(forecastArray);
+      displayFiveDayForecast();
     });
 }
 
 function displayFiveDayForecast() {
-
+  console.log('Start of display five day function');
+  for (var x=0; x < Object.keys(forecastArray[0]).length; x++) {
+    // console.log(x + ': ' + forecastArray[0][x]);
+    dayNum = x + 1;
+    fiveDayForecastEl.append('<div id="day-'+dayNum.toString()+'-forecast"></div>');
+    $('#day-'+dayNum+'-forecast').append('<h4>'+forecastArray[0][x].date+'</h4>');
+    $('#day-'+dayNum+'-forecast').append('<h4>Temp: '+forecastArray[0][x].topTemp+'&#176F</h4>');
+    $('#day-'+dayNum+'-forecast').append('<h4>Wind: '+forecastArray[0][x].topWindSpeed+' MPH</h4>');
+    $('#day-'+dayNum+'-forecast').append('<h4>Humidity: '+forecastArray[0][x].topHumidity+' %</h4>');
+  }
+  console.log('end of display five day function');
 }
