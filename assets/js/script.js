@@ -17,6 +17,8 @@ var coordinates = {};
 //Variables needed for current weather
 var currentWeatherURL = '';
 var currentWeather = {};
+var currentDayEl = $('#current-date');
+var currentWeatherIconEl = $('#current-weather-icon');
 
 console.log('Inner HTML before function: ' + currentCityEl.innerHTML);
 
@@ -61,9 +63,13 @@ function returnCurrentWeather(coordinates) {
     })
     .then(function (data) {
         console.log(data);
+        // currentWeather.time = data.dt;
+        // currentWeather.timeZone = data.timezone;
+        currentWeather.icon = data.weather[0].icon;
         currentWeather.temperature = data.main.temp;
         currentWeather.wind = data.wind.speed
         currentWeather.humidity = data.main.humidity;
+        //console.log('UTC Time: ' + currentWeather.time);
         console.log('Temperature: ' + currentWeather.temperature);
         console.log('Wind: ' + currentWeather.wind)
         console.log('Humididty: ' + currentWeather.humidity);
@@ -74,6 +80,10 @@ function returnCurrentWeather(coordinates) {
 //Displays the city name and current temperature, wind speed, and humidity
 function displayCurrentWeather() {
     currentCityEl.html(citySearched);
+    currentDayEl.html(dayjs().format('MM/DD/YYYY'));
+    var iconURL = "http://openweathermap.org/img/w/"+currentWeather.icon.toString()+".png";
+    console.log(iconURL);
+    currentWeatherIconEl.attr("src", iconURL);
     currentTempEl.html('Temp: ' + currentWeather.temperature.toString() + '&#176F');
     currentWindEl.html('Wind: ' + currentWeather.wind.toString() + ' MPH');
     currentHumidityEl.html('Humidity: ' + currentWeather.humidity.toString() + '%'); 
