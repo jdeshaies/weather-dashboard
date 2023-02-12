@@ -20,15 +20,17 @@ var currentWeather = {};
 var currentDayEl = $('#current-date');
 var currentWeatherIconEl = $('#current-weather-icon');
 
-console.log('Inner HTML before function: ' + currentCityEl.innerHTML);
+//Variables needed for weather forecast
+var forecastTemps = {};
+
 
 //Creates a URL to request to cooridinates for the city entered when the search button is clicked
 searchButtonEl.on('click', function (event) {
     event.preventDefault();
     citySearched = inputEl.val();
-    console.log("City Name: " + inputEl.val());
+    // console.log("City Name: " + inputEl.val());
     coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
-    console.log(coordinatesURL)
+    // console.log(coordinatesURL)
     returnCoordinates(coordinatesURL);
 });
 
@@ -36,33 +38,34 @@ searchButtonEl.on('click', function (event) {
 function returnCoordinates(coordinatesURL) {
     fetch(coordinatesURL)
     .then(function (response) {
-      console.log(response);
+      // console.log(response);
       return response.json()
     })
     .then(function (data) {
-        console.log(data);
+        // console.log(data);
         latitude = data[0].lat;
-        console.log('Latitude: ' + latitude);
+        // console.log('Latitude: ' + latitude);
         longitude = data[0].lon;
-        console.log('Longitude: ' + longitude);
+        // console.log('Longitude: ' + longitude);
         coordinates.latitudeValue = latitude;
         coordinates.longitudeValue = longitude;
-        console.log(coordinates);
+        // console.log(coordinates);
         returnCurrentWeather(coordinates);
+        returnWeatherForecast(coordinates);
       });
 }
 
 //Creates the URL to request the current weather based on the coordinates and saves temperature, wind speed, and humidity based on the response
 function returnCurrentWeather(coordinates) {
-    console.log('Start of current weather function');
+    // console.log('Start of current weather function');
     currentWeatherURL = 'https://api.openweathermap.org/data/2.5/weather?lat='+coordinates.latitudeValue+'&lon='+coordinates.longitudeValue+'&appid='+apiKey+'&units=imperial';
     fetch(currentWeatherURL)
     .then(function (response) {
-      console.log(response);
+      // console.log(response);
       return response.json()
     })
     .then(function (data) {
-        console.log(data);
+        // console.log(data);
         // currentWeather.time = data.dt;
         // currentWeather.timeZone = data.timezone;
         currentWeather.icon = data.weather[0].icon;
@@ -70,9 +73,9 @@ function returnCurrentWeather(coordinates) {
         currentWeather.wind = data.wind.speed
         currentWeather.humidity = data.main.humidity;
         //console.log('UTC Time: ' + currentWeather.time);
-        console.log('Temperature: ' + currentWeather.temperature);
-        console.log('Wind: ' + currentWeather.wind)
-        console.log('Humididty: ' + currentWeather.humidity);
+        // console.log('Temperature: ' + currentWeather.temperature);
+        // console.log('Wind: ' + currentWeather.wind)
+        // console.log('Humididty: ' + currentWeather.humidity);
         displayCurrentWeather();
       });
 }
@@ -82,9 +85,30 @@ function displayCurrentWeather() {
     currentCityEl.html(citySearched);
     currentDayEl.html(dayjs().format('MM/DD/YYYY'));
     var iconURL = "http://openweathermap.org/img/w/"+currentWeather.icon.toString()+".png";
-    console.log(iconURL);
+    // console.log(iconURL);
     currentWeatherIconEl.attr("src", iconURL);
     currentTempEl.html('Temp: ' + currentWeather.temperature.toString() + '&#176F');
     currentWindEl.html('Wind: ' + currentWeather.wind.toString() + ' MPH');
     currentHumidityEl.html('Humidity: ' + currentWeather.humidity.toString() + '%'); 
+}
+
+//LEFT OFF HERE. NOT SURE IF DISPLAYING AVERAGE OF HOURLY FORECASTS FOR 5 DAYS
+function returnWeatherForecast(coordinates) {
+  console.log('Start of weather forecast function');
+  weatherForecastURL = 'https://api.openweathermap.org/data/2.5/forecast?lat='+coordinates.latitudeValue+'&lon='+coordinates.longitudeValue+'&appid='+apiKey+'&units=imperial';
+  fetch(weatherForecastURL)
+  .then(function (response) {
+    console.log(response);
+    return response.json()
+  })
+  .then(function (data) {
+      console.log(data);
+      for (var i=0; i<data.list.length; i++) {
+        var splitArray = data.list[i].dt_txt.split(' ');
+        var forecastDate = splitArray[0];
+        if (forecastDate !== dayjs().format('YYYY-MM-DD').toString()) {
+          console.log(data.list[i].dt_txt + ': ' + data.list[i].main.temp);
+        }
+      }
+    });
 }
