@@ -84,7 +84,7 @@ function returnCurrentWeather(coordinates) {
 //Displays the city name and current temperature, wind speed, and humidity
 function displayCurrentWeather() {
     currentCityEl.html(citySearched);
-    currentDayEl.html(dayjs().format('MM/DD/YYYY'));
+    currentDayEl.html(dayjs().format('M/DD/YYYY'));
     var iconURL = "http://openweathermap.org/img/w/"+currentWeather.icon.toString()+".png";
     // console.log(iconURL);
     currentWeatherIconEl.attr("src", iconURL);
@@ -126,7 +126,7 @@ function returnWeatherForecast(coordinates) {
         var forecastTemp = data.list[i].main.temp;
         var forecastWindSpeed = data.list[i].wind.speed;
         var forecastHumidity = data.list[i].main.humidity;
-        if (forecastDate !== dayjs().format('MM-DD-YYYY').toString()) {
+        if (forecastDate !== dayjs().format('M/DD/YYYY').toString()) {
           // console.log('Loop #: ' + i);
           // console.log('Forecast Date: ' + forecastDate);
           // console.log('Prev Day: ' + prevDay);
@@ -187,14 +187,16 @@ function returnWeatherForecast(coordinates) {
 
 function displayFiveDayForecast() {
   console.log('Start of display five day function');
+  fiveDayForecastEl.append('<h2>5 Day Forecast:</h2>');
+  fiveDayForecastEl.append('<div class="forecast-container pr-2 d-flex justify-content-between"></div>');
   for (var x=0; x < Object.keys(forecastArray[0]).length; x++) {
     // console.log(x + ': ' + forecastArray[0][x]);
     dayNum = x + 1;
-    fiveDayForecastEl.append('<div id="day-'+dayNum.toString()+'-forecast"></div>');
-    $('#day-'+dayNum+'-forecast').append('<h4>'+forecastArray[0][x].date+'</h4>');
-    $('#day-'+dayNum+'-forecast').append('<h4>Temp: '+forecastArray[0][x].topTemp+'&#176F</h4>');
-    $('#day-'+dayNum+'-forecast').append('<h4>Wind: '+forecastArray[0][x].topWindSpeed+' MPH</h4>');
-    $('#day-'+dayNum+'-forecast').append('<h4>Humidity: '+forecastArray[0][x].topHumidity+' %</h4>');
+    $('.forecast-container').append('<div id="day-'+dayNum.toString()+'-forecast"></div>');
+    $('#day-'+dayNum+'-forecast').append('<p class="h4">'+forecastArray[0][x].date+'</p>');
+    $('#day-'+dayNum+'-forecast').append('<p class="h6">Temp: '+forecastArray[0][x].topTemp+'&#176F</p>');
+    $('#day-'+dayNum+'-forecast').append('<p class="h6">Wind: '+forecastArray[0][x].topWindSpeed+' MPH</p>');
+    $('#day-'+dayNum+'-forecast').append('<p class="h6">Humidity: '+forecastArray[0][x].topHumidity+' %</p>');
   }
   console.log('end of display five day function');
 }
@@ -203,7 +205,10 @@ function changeDateFormat(strDate) {
   var dateArray = strDate.split('-');
   var year = dateArray[0];
   var month = dateArray[1];
+  if (month[0]= 2) {
+    month = month.slice(1)
+  }
   var day = dateArray[2];
-  var newDate = month+'-'+day+'-'+year;
+  var newDate = month+'/'+day+'/'+year;
   return newDate;
 }
