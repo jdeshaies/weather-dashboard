@@ -83,8 +83,9 @@ function returnCurrentWeather(coordinates) {
 
 //Displays the city name and current temperature, wind speed, and humidity
 function displayCurrentWeather() {
+    $('.current-forecast').attr("class", "border border-dark px-2");
     currentCityEl.html(citySearched);
-    currentDayEl.html(dayjs().format('M/DD/YYYY'));
+    currentDayEl.html('('+dayjs().format('M/DD/YYYY')+')');
     var iconURL = "http://openweathermap.org/img/w/"+currentWeather.icon.toString()+".png";
     // console.log(iconURL);
     currentWeatherIconEl.attr("src", iconURL);
@@ -192,7 +193,7 @@ function displayFiveDayForecast() {
   for (var x=0; x < Object.keys(forecastArray[0]).length; x++) {
     // console.log(x + ': ' + forecastArray[0][x]);
     dayNum = x + 1;
-    $('.forecast-container').append('<div id="day-'+dayNum.toString()+'-forecast"></div>');
+    $('.forecast-container').append('<div class="bg-dark text-white" id="day-'+dayNum.toString()+'-forecast"></div>');
     $('#day-'+dayNum+'-forecast').append('<p class="h4">'+forecastArray[0][x].date+'</p>');
     $('#day-'+dayNum+'-forecast').append('<p class="h6">Temp: '+forecastArray[0][x].topTemp+'&#176F</p>');
     $('#day-'+dayNum+'-forecast').append('<p class="h6">Wind: '+forecastArray[0][x].topWindSpeed+' MPH</p>');

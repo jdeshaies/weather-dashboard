@@ -16,11 +16,11 @@
     <div class="jumbotron text-center bg-primary text-white">
       <h1>Weather Dashboard</h1>
     </div>
-    <div class="row">
+    <div class="row px-2">
       <div class="col-4">
         <form id="city-search">
-          <div class="form-group border">
-            <label for="city" class="h1 m-1">Search for a City:</label>
+          <div class="form-group">
+            <label for="city" class="h2 m-1">Search for a City:</label>
             <input type="text" name="city-input" placeholder="Enter city" class="form-control my-2"/>
           </div>
           <button id="search-button" class="btn btn-block btn-primary w-100">Search</button>
@@ -30,13 +30,15 @@
         </div>
       </div>
       <div class="col-8">
-        <div class="current-forecast">
-            <h2 id="current-city">
-            <h2 id='current-date'></h2>
+        <div class="current-forecast my-2">
+          <div class="current-forecast-header d-flex">
+            <h2 id="current-city"></h2>
+            <h2 id='current-date' class="mx-4"></h2>
             <img src="" id='current-weather-icon'></img>
-            <h4 id="current-temp"></h3>
-            <h4 id="current-wind"></h3>
-            <h4 id="current-humidity"></h3>
+          </div>
+          <h4 id="current-temp"></h3>
+          <h4 id="current-wind"></h3>
+          <h4 id="current-humidity"></h3>
         </div>
         <div class="five-day-forecast h2"></div>
       </div>
