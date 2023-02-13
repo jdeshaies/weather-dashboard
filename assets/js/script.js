@@ -140,7 +140,7 @@ function returnWeatherForecast(coordinates) {
           else if (i === lastValue) {
             // console.log('Last Iteration');
             dailyForecastObject[objectCounter] = {
-              date: forecastDate, 
+              date: prevDay, 
               topTemp: maxTemp,
               topWindSpeed: maxWindSpeed,
               topHumidity: maxHumidity
