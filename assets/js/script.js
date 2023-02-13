@@ -23,11 +23,12 @@ var currentWeatherIconEl = $('#current-weather-icon');
 //Variables needed for weather forecast
 var forecastArray = [];
 var dailyForecastObject = {};
-var fiveDayForecastEl = $('.five-day-forecast');
+var fiveDayForecastEl = $('#five-day-forecast');
 
 //Creates a URL to request to cooridinates for the city entered when the search button is clicked
 searchButtonEl.on('click', function (event) {
     event.preventDefault();
+    fiveDayForecastEl.empty();
     citySearched = inputEl.val().trim();
     // console.log("City Name: " + inputEl.val());
     coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
