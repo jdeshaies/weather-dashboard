@@ -25,11 +25,21 @@ var forecastArray = [];
 var dailyForecastObject = {};
 var fiveDayForecastEl = $('#five-day-forecast');
 
-//Creates a URL to request to cooridinates for the city entered when the search button is clicked
+//Variables for searchHistory
+
+var searchHistory = [];
+var searchHistoryEl = $('.search-history');
+
+renderSearchHistory();
+
+//Creates a URL to request to cooridinates for the city entered when the search button is clicked and saves city to array in local storage
 searchButtonEl.on('click', function (event) {
     event.preventDefault();
+    renderSearchHistory();
     fiveDayForecastEl.empty();
     citySearched = inputEl.val().trim();
+    searchHistory.push(citySearched);
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
     // console.log("City Name: " + inputEl.val());
     coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
     // console.log(coordinatesURL)
@@ -213,4 +223,15 @@ function changeDateFormat(strDate) {
   var day = dateArray[2];
   var newDate = month+'/'+day+'/'+year;
   return newDate;
+}
+
+function renderSearchHistory() {
+  // Use JSON.parse() to convert text to JavaScript object
+  var searchHistoryLocalStorage = JSON.parse(localStorage.getItem("searchHistory"));
+  // Check if data is returned, if not exit out of the function
+  if (searchHistoryLocalStorage !== null) {
+    searchHistory = searchHistoryLocalStorage;
+    console.log(searchHistory); 
+  }
+
 }
