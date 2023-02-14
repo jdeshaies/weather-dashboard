@@ -28,22 +28,25 @@ var fiveDayForecastEl = $('#five-day-forecast');
 //Variables for searchHistory
 
 var searchHistory = [];
-var searchHistoryListEl = $('#search-history-list');
+var searchHistoryListEl = $('.search-history');
 
 renderSearchHistory();
 
 //Creates a URL to request to cooridinates for the city entered when the search button is clicked and saves city to array in local storage
 searchButtonEl.on('click', function (event) {
     event.preventDefault();
-    fiveDayForecastEl.empty();
     citySearched = inputEl.val().trim();
-    searchHistoryListEl.append('<li>'+citySearched+'</li>');
-    searchHistory.push(citySearched);
-    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
-    // console.log("City Name: " + inputEl.val());
-    coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
-    // console.log(coordinatesURL)
-    returnCoordinates(coordinatesURL);
+    if (citySearched){
+      inputEl.val('');
+      fiveDayForecastEl.empty();
+      searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
+      searchHistory.unshift(citySearched);
+      localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+      // console.log("City Name: " + inputEl.val());
+      coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
+      // console.log(coordinatesURL)
+      returnCoordinates(coordinatesURL);
+    }
 });
 
 //Returns the latitude and longitude of city entered based on URL in an object
@@ -234,7 +237,7 @@ function renderSearchHistory() {
     // console.log(searchHistory); 
   }
   for (var i = 0; i<searchHistory.length; i++){
-    searchHistoryListEl.append('<li>'+searchHistory[i]+'</li>');
+    searchHistoryListEl.append('<button class="btn btn-block btn-secondary w-100 my-2">'+searchHistory[i]+'</button>');
   }
 
 }
