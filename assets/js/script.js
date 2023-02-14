@@ -28,16 +28,16 @@ var fiveDayForecastEl = $('#five-day-forecast');
 //Variables for searchHistory
 
 var searchHistory = [];
-var searchHistoryEl = $('.search-history');
+var searchHistoryListEl = $('#search-history-list');
 
 renderSearchHistory();
 
 //Creates a URL to request to cooridinates for the city entered when the search button is clicked and saves city to array in local storage
 searchButtonEl.on('click', function (event) {
     event.preventDefault();
-    renderSearchHistory();
     fiveDayForecastEl.empty();
     citySearched = inputEl.val().trim();
+    searchHistoryListEl.append('<li>'+citySearched+'</li>');
     searchHistory.push(citySearched);
     localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
     // console.log("City Name: " + inputEl.val());
@@ -231,7 +231,10 @@ function renderSearchHistory() {
   // Check if data is returned, if not exit out of the function
   if (searchHistoryLocalStorage !== null) {
     searchHistory = searchHistoryLocalStorage;
-    console.log(searchHistory); 
+    // console.log(searchHistory); 
+  }
+  for (var i = 0; i<searchHistory.length; i++){
+    searchHistoryListEl.append('<li>'+searchHistory[i]+'</li>');
   }
 
 }

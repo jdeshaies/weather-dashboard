@@ -18,15 +18,15 @@
     </div>
     <div class="row px-2">
       <div class="col-4">
-        <form id="city-search">
+        <form id="city-search" class="mb-4">
           <div class="form-group">
             <label for="city" class="h2 m-1">Search for a City:</label>
             <input type="text" name="city-input" placeholder="Enter city" class="form-control my-2"/>
           </div>
           <button id="search-button" class="btn btn-block btn-primary w-100">Search</button>
         </form>
-        <div class="search-history">
-          <h2>Search History List</h2>
+        <div class="search-history border-top pt-4">
+          <ul id="search-history-list"></ul>
         </div>
       </div>
       <div class="col-8">
