@@ -41,6 +41,13 @@ searchButtonEl.on('click', function (event) {
     citySearched = inputEl.val().trim();
     if (citySearched){
       inputEl.val('');
+      searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
+      $('.btn-secondary').first().click(function(){
+        citySearched = $(this).html();
+        createCoordinatesURL(citySearched);
+      })
+      searchHistory.unshift(citySearched);
+      localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
       createCoordinatesURL(citySearched);
     }
 });
@@ -48,9 +55,9 @@ searchButtonEl.on('click', function (event) {
 //Returns the URL needed to retrieve the city coordinates based on the city entered in the form
 function createCoordinatesURL(citySearched){
   fiveDayForecastEl.empty();
-  searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
-  searchHistory.unshift(citySearched);
-  localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+  // searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
+  // searchHistory.unshift(citySearched);
+  // localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
   coordinatesURL = 'https://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
   returnCoordinates(coordinatesURL);
 }
@@ -104,7 +111,6 @@ function returnWeatherForecast(coordinates) {
   weatherForecastURL = 'https://api.openweathermap.org/data/2.5/forecast?lat='+coordinates.latitudeValue+'&lon='+coordinates.longitudeValue+'&appid='+apiKey+'&units=imperial';
   fetch(weatherForecastURL)
   .then(function (response) {
-    console.log(response);
     return response.json()
   })
   .then(function (data) {
@@ -169,7 +175,6 @@ function returnWeatherForecast(coordinates) {
         }
       }
       forecastArray.push(dailyForecastObject);
-      console.log(forecastArray);
       displayFiveDayForecast();
     });
 }
@@ -213,12 +218,10 @@ function renderSearchHistory() {
 }
 
 // Adds event listener to search history button and displays weather for that city when clicked
-$('.btn-secondary').each(function(){
+$('.btn-secondary').each(function() {
   $(this).click(function(){
-    console.log('Inner HTML: '+ $(this).html());
     citySearched = $(this).html();
-    console.log(citySearched);
     createCoordinatesURL(citySearched);
   })
-})
+});
 
