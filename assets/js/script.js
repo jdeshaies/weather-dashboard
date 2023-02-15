@@ -51,7 +51,7 @@ function createCoordinatesURL(citySearched){
   searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
   searchHistory.unshift(citySearched);
   localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
-  coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
+  coordinatesURL = 'https://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
   returnCoordinates(coordinatesURL);
 }
 
