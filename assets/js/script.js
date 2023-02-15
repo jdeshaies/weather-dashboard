@@ -30,6 +30,7 @@ var fiveDayForecastEl = $('#five-day-forecast');
 var searchHistory = [];
 var searchHistoryListEl = $('.search-history');
 
+
 renderSearchHistory();
 
 //Creates a URL to request to cooridinates for the city entered when the search button is clicked and saves city to array in local storage
@@ -38,16 +39,28 @@ searchButtonEl.on('click', function (event) {
     citySearched = inputEl.val().trim();
     if (citySearched){
       inputEl.val('');
-      fiveDayForecastEl.empty();
-      searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
-      searchHistory.unshift(citySearched);
-      localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
-      // console.log("City Name: " + inputEl.val());
-      coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
-      // console.log(coordinatesURL)
-      returnCoordinates(coordinatesURL);
+      // fiveDayForecastEl.empty();
+      // searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
+      // searchHistory.unshift(citySearched);
+      // localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+      // // console.log("City Name: " + inputEl.val());
+      // coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
+      // // console.log(coordinatesURL)
+      // returnCoordinates(coordinatesURL);
     }
+    createCoordinatesURL(citySearched);
 });
+
+function createCoordinatesURL(citySearched){
+  fiveDayForecastEl.empty();
+  searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
+  searchHistory.unshift(citySearched);
+  localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+  // console.log("City Name: " + inputEl.val());
+  coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
+  // console.log(coordinatesURL)
+  returnCoordinates(coordinatesURL);
+}
 
 //Returns the latitude and longitude of city entered based on URL in an object
 function returnCoordinates(coordinatesURL) {
@@ -239,5 +252,26 @@ function renderSearchHistory() {
   for (var i = 0; i<searchHistory.length; i++){
     searchHistoryListEl.append('<button class="btn btn-block btn-secondary w-100 my-2">'+searchHistory[i]+'</button>');
   }
-
 }
+
+// searchHistoryButtons.on('click', function (event) {
+//   var buttonText = target.text();
+//   console.log('Button text: ' + buttonText);
+// });
+
+// var searchHistoryButtons = $('.btn-secondary');
+// for (var i = 0; i<searchHistoryButtons.length; i++){
+//   // console.log(searchHistoryButtons[i].innerHTML);
+//     searchHistoryButtons[i].on('click', function (event) {
+//     alert(searchHistoryButtons[i].innerHTML);
+//   })
+// }
+
+$('.btn-secondary').each(function(){
+  $(this).click(function(){
+    var buttonText = $(this).html();
+    createCoordinatesURL(buttonText);
+  })
+})
+
+// console.log(searchHistoryButtons);
