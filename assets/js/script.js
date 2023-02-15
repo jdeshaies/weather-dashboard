@@ -92,7 +92,7 @@ function displayCurrentWeather() {
     $('.current-forecast').attr("class", "border border-dark px-2");
     currentCityEl.html(citySearched);
     currentDayEl.html('('+dayjs().format('M/DD/YYYY')+')');
-    var iconURL = "http://openweathermap.org/img/w/"+currentWeather.icon.toString()+".png";
+    var iconURL = "https://openweathermap.org/img/w/"+currentWeather.icon.toString()+".png";
     currentWeatherIconEl.attr("src", iconURL);
     currentTempEl.html('Temp: ' + currentWeather.temperature.toString() + '&#176F');
     currentWindEl.html('Wind: ' + currentWeather.wind.toString() + ' MPH');
