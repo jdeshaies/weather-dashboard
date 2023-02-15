@@ -1,10 +1,8 @@
+// Variables related to form where user enters a city 
 var inputEl = $('input[name="city-input"]');
 var searchButtonEl = $('#search-button');
-var currentCityEl = $('#current-city');
-var currentTempEl = $('#current-temp');
-var currentWindEl = $('#current-wind');
-var currentHumidityEl = $('#current-humidity');
-var citySearched = ''
+
+// Variables related to API
 var searchLimit = 1;
 var apiKey = '984f01ce82f22feac8fdecd70b3ccc45';
 
@@ -19,6 +17,11 @@ var currentWeatherURL = '';
 var currentWeather = {};
 var currentDayEl = $('#current-date');
 var currentWeatherIconEl = $('#current-weather-icon');
+var currentCityEl = $('#current-city');
+var currentTempEl = $('#current-temp');
+var currentWindEl = $('#current-wind');
+var currentHumidityEl = $('#current-humidity');
+var citySearched = ''
 
 //Variables needed for weather forecast
 var forecastArray = [];
@@ -26,11 +29,10 @@ var dailyForecastObject = {};
 var fiveDayForecastEl = $('#five-day-forecast');
 
 //Variables for searchHistory
-
 var searchHistory = [];
 var searchHistoryListEl = $('.search-history');
 
-
+//Checks for previously searched cities in local storage first
 renderSearchHistory();
 
 //Creates a URL to request to cooridinates for the city entered when the search button is clicked and saves city to array in local storage
@@ -39,26 +41,17 @@ searchButtonEl.on('click', function (event) {
     citySearched = inputEl.val().trim();
     if (citySearched){
       inputEl.val('');
-      // fiveDayForecastEl.empty();
-      // searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
-      // searchHistory.unshift(citySearched);
-      // localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
-      // // console.log("City Name: " + inputEl.val());
-      // coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
-      // // console.log(coordinatesURL)
-      // returnCoordinates(coordinatesURL);
+      createCoordinatesURL(citySearched);
     }
-    createCoordinatesURL(citySearched);
 });
 
+//Returns the URL needed to retrieve the city coordinates based on the city entered in the form
 function createCoordinatesURL(citySearched){
   fiveDayForecastEl.empty();
   searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+citySearched+'</button>');
   searchHistory.unshift(citySearched);
   localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
-  // console.log("City Name: " + inputEl.val());
   coordinatesURL = 'http://api.openweathermap.org/geo/1.0/direct?q='+citySearched+'&limit='+searchLimit+'&appid='+apiKey;
-  // console.log(coordinatesURL)
   returnCoordinates(coordinatesURL);
 }
 
@@ -66,18 +59,13 @@ function createCoordinatesURL(citySearched){
 function returnCoordinates(coordinatesURL) {
     fetch(coordinatesURL)
     .then(function (response) {
-      // console.log(response);
       return response.json()
     })
     .then(function (data) {
-        // console.log(data);
         latitude = data[0].lat;
-        // console.log('Latitude: ' + latitude);
         longitude = data[0].lon;
-        // console.log('Longitude: ' + longitude);
         coordinates.latitudeValue = latitude;
         coordinates.longitudeValue = longitude;
-        // console.log(coordinates);
         returnCurrentWeather(coordinates);
         returnWeatherForecast(coordinates);
       });
@@ -85,25 +73,16 @@ function returnCoordinates(coordinatesURL) {
 
 //Creates the URL to request the current weather based on the coordinates and saves temperature, wind speed, and humidity based on the response
 function returnCurrentWeather(coordinates) {
-    // console.log('Start of current weather function');
     currentWeatherURL = 'https://api.openweathermap.org/data/2.5/weather?lat='+coordinates.latitudeValue+'&lon='+coordinates.longitudeValue+'&appid='+apiKey+'&units=imperial';
     fetch(currentWeatherURL)
     .then(function (response) {
-      // console.log(response);
       return response.json()
     })
     .then(function (data) {
-        // console.log(data);
-        // currentWeather.time = data.dt;
-        // currentWeather.timeZone = data.timezone;
         currentWeather.icon = data.weather[0].icon;
         currentWeather.temperature = data.main.temp;
         currentWeather.wind = data.wind.speed
         currentWeather.humidity = data.main.humidity;
-        //console.log('UTC Time: ' + currentWeather.time);
-        // console.log('Temperature: ' + currentWeather.temperature);
-        // console.log('Wind: ' + currentWeather.wind)
-        // console.log('Humididty: ' + currentWeather.humidity);
         displayCurrentWeather();
       });
 }
@@ -114,7 +93,6 @@ function displayCurrentWeather() {
     currentCityEl.html(citySearched);
     currentDayEl.html('('+dayjs().format('M/DD/YYYY')+')');
     var iconURL = "http://openweathermap.org/img/w/"+currentWeather.icon.toString()+".png";
-    // console.log(iconURL);
     currentWeatherIconEl.attr("src", iconURL);
     currentTempEl.html('Temp: ' + currentWeather.temperature.toString() + '&#176F');
     currentWindEl.html('Wind: ' + currentWeather.wind.toString() + ' MPH');
@@ -123,7 +101,6 @@ function displayCurrentWeather() {
 
 //Creates an object where the key is the date of the five day forecast and the value is the max temp for that day
 function returnWeatherForecast(coordinates) {
-  console.log('Start of weather forecast function');
   weatherForecastURL = 'https://api.openweathermap.org/data/2.5/forecast?lat='+coordinates.latitudeValue+'&lon='+coordinates.longitudeValue+'&appid='+apiKey+'&units=imperial';
   fetch(weatherForecastURL)
   .then(function (response) {
@@ -131,22 +108,17 @@ function returnWeatherForecast(coordinates) {
     return response.json()
   })
   .then(function (data) {
-      console.log(data);
       var listLength = data.list.length
-      // console.log('List length: ' + listLength);
       lastValue = listLength-1;
-      // console.log('One less than list length: ' + lastValue);
       var maxTemp = 0;
       var maxWindSpeed = 0;
       var maxHumidity = 0;
       var objectCounter = 0;
-      var firstDay = true;
+      var firstIteration = true;
+      //Loops through each 3-hour iteration of the five day forecast to obtain the high temp, wind speed, and humidity for each day
       for (var i=0; i<data.list.length; i++) {
-        // console.log('Last Value: ' + lastValue);
-        // console.log('i: ' + i);
         var splitArray = data.list[i].dt_txt.split(' ');
         var forecastDate = changeDateFormat(splitArray[0]);
-        console.log('Updated date: ' + forecastDate);
         if (i != 0) {
           var splitArray2 = data.list[i-1].dt_txt.split(' ');
           var prevDay = changeDateFormat(splitArray2[0]);
@@ -154,19 +126,16 @@ function returnWeatherForecast(coordinates) {
         var forecastTemp = data.list[i].main.temp;
         var forecastWindSpeed = data.list[i].wind.speed;
         var forecastHumidity = data.list[i].main.humidity;
-        if (forecastDate !== dayjs().format('M/DD/YYYY').toString()) {
-          // console.log('Loop #: ' + i);
-          // console.log('Forecast Date: ' + forecastDate);
-          // console.log('Prev Day: ' + prevDay);
-          if (firstDay) {
-            // console.log('First iteration');
+        //Only includes days that are not the current day so the current day won't be shown in the five day forecast
+        if (forecastDate !== dayjs().format('M/DD/YYYY').toString()) { 
+          // Makes all values the max value since it is the first 3-hour iteration checked and does not have previous value to compare
+          if (firstIteration) {
             maxTemp = forecastTemp;
             maxWindSpeed = forecastWindSpeed;
             maxHumidity = forecastHumidity;
-            firstDay = false;
+            firstIteration = false;
           }
           else if (i === lastValue) {
-            // console.log('Last Iteration');
             dailyForecastObject[objectCounter] = {
               date: prevDay, 
               topTemp: maxTemp,
@@ -175,22 +144,17 @@ function returnWeatherForecast(coordinates) {
             };
           }
           else if (prevDay === forecastDate) {
-            // console.log('Prev day the same');
             if (forecastTemp > maxTemp) {
-              // console.log('New max temp of: ' + maxTemp);
               maxTemp = forecastTemp;
             };
             if (forecastWindSpeed > maxWindSpeed) {
-              // console.log('New max temp of: ' + maxTemp);
               maxWindSpeed = forecastWindSpeed;
             };
             if (forecastHumidity > maxHumidity) {
-              // console.log('New max temp of: ' + maxTemp);
               maxHumidity = forecastHumidity;
             };
           }
           else {
-            // console.log('New day');
             dailyForecastObject[objectCounter] = {
               date: prevDay, 
               topTemp: maxTemp,
@@ -201,10 +165,7 @@ function returnWeatherForecast(coordinates) {
             maxWindSpeed = 0;
             maxHumidity = 0;
             objectCounter++;
-            // console.log(dailyForecastObject);
           }
-          // console.log('Temp: ' + temp);
-          // console.log('Max Temp: ' + maxTemp);
         }
       }
       forecastArray.push(dailyForecastObject);
@@ -213,12 +174,11 @@ function returnWeatherForecast(coordinates) {
     });
 }
 
+//Displays the five day forecast of the city searched
 function displayFiveDayForecast() {
-  console.log('Start of display five day function');
   fiveDayForecastEl.append('<h2>5 Day Forecast:</h2>');
   fiveDayForecastEl.append('<div class="forecast-container pr-2 d-flex justify-content-between"></div>');
   for (var x=0; x < Object.keys(forecastArray[0]).length; x++) {
-    // console.log(x + ': ' + forecastArray[0][x]);
     dayNum = x + 1;
     $('.forecast-container').append('<div class="bg-dark text-white" id="day-'+dayNum.toString()+'-forecast"></div>');
     $('#day-'+dayNum+'-forecast').append('<p class="h4">'+forecastArray[0][x].date+'</p>');
@@ -226,9 +186,9 @@ function displayFiveDayForecast() {
     $('#day-'+dayNum+'-forecast').append('<p class="h6">Wind: '+forecastArray[0][x].topWindSpeed+' MPH</p>');
     $('#day-'+dayNum+'-forecast').append('<p class="h6">Humidity: '+forecastArray[0][x].topHumidity+' %</p>');
   }
-  console.log('end of display five day function');
 }
 
+// Changes the format of the date pulled from the API to be in MM/DD/YYYY format instead of YYYY-MM-DD
 function changeDateFormat(strDate) {
   var dateArray = strDate.split('-');
   var year = dateArray[0];
@@ -241,37 +201,24 @@ function changeDateFormat(strDate) {
   return newDate;
 }
 
+//Takes the search history in the local storage and creates buttons of the cities
 function renderSearchHistory() {
-  // Use JSON.parse() to convert text to JavaScript object
   var searchHistoryLocalStorage = JSON.parse(localStorage.getItem("searchHistory"));
-  // Check if data is returned, if not exit out of the function
   if (searchHistoryLocalStorage !== null) {
     searchHistory = searchHistoryLocalStorage;
-    // console.log(searchHistory); 
   }
   for (var i = 0; i<searchHistory.length; i++){
-    searchHistoryListEl.append('<button class="btn btn-block btn-secondary w-100 my-2">'+searchHistory[i]+'</button>');
+    searchHistoryListEl.prepend('<button class="btn btn-block btn-secondary w-100 my-2">'+searchHistory[i]+'</button>');
   }
 }
 
-// searchHistoryButtons.on('click', function (event) {
-//   var buttonText = target.text();
-//   console.log('Button text: ' + buttonText);
-// });
-
-// var searchHistoryButtons = $('.btn-secondary');
-// for (var i = 0; i<searchHistoryButtons.length; i++){
-//   // console.log(searchHistoryButtons[i].innerHTML);
-//     searchHistoryButtons[i].on('click', function (event) {
-//     alert(searchHistoryButtons[i].innerHTML);
-//   })
-// }
-
+// Adds event listener to search history button and displays weather for that city when clicked
 $('.btn-secondary').each(function(){
   $(this).click(function(){
-    var buttonText = $(this).html();
-    createCoordinatesURL(buttonText);
+    console.log('Inner HTML: '+ $(this).html());
+    citySearched = $(this).html();
+    console.log(citySearched);
+    createCoordinatesURL(citySearched);
   })
 })
 
-// console.log(searchHistoryButtons);
